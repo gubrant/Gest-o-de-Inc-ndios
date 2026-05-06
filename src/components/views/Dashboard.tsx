@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
+import React from 'react';
 import { doc, collection, query, onSnapshot, orderBy, limit, where, updateDoc } from 'firebase/firestore';
 import { db, handleFirestoreError } from '../../firebase';
-import { Person, Vehicle, Team, Material, Incident } from '../../types';
+import { Person, Vehicle, Team, Material, Incident, AppUser } from '../../types';
 import { 
   Users, Truck, Shield, Package, 
   Activity, AlertTriangle, Clock, ArrowUpRight,
-  UtensilsCrossed, MapPin, ChevronDown 
+  UtensilsCrossed, MapPin, ChevronDown, Lock, Key 
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { format } from 'date-fns';
 
 interface DashboardProps {
   incidentId: string;
+  user: AppUser;
 }
 
 const STATUS_OPTIONS = [
@@ -22,8 +24,10 @@ const STATUS_OPTIONS = [
   { value: 'controlled', label: 'Debelado', color: 'text-green-500', dot: 'bg-green-500' }
 ];
 
-export default function Dashboard({ incidentId }: DashboardProps) {
+export default function Dashboard({ incidentId, user }: DashboardProps) {
   const [incident, setIncident] = useState<Incident | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFormData, setEditFormData] = useState<Partial<Incident>>({});
   const [stats, setStats] = useState({
     people: 0,
     activePeople: 0,
@@ -35,7 +39,9 @@ export default function Dashboard({ incidentId }: DashboardProps) {
   useEffect(() => {
     const unsubIncident = onSnapshot(doc(db, 'incidents', incidentId), (doc) => {
       if (doc.exists()) {
-        setIncident({ id: doc.id, ...doc.data() } as Incident);
+        const data = { id: doc.id, ...doc.data() } as Incident;
+        setIncident(data);
+        setEditFormData(data);
       }
     }, (error) => {
       handleFirestoreError(error, 'get' as any, 'incidents');
@@ -71,11 +77,28 @@ export default function Dashboard({ incidentId }: DashboardProps) {
     };
   }, [incidentId]);
 
+  const canEdit = incident?.createdBy === user.login || user.role === 'admin';
+
   const handleStatusChange = async (newStatus: string) => {
+    if (!canEdit) return;
     try {
       await updateDoc(doc(db, 'incidents', incidentId), {
         status: newStatus
       });
+    } catch (error) {
+      handleFirestoreError(error, 'update' as any, `incidents/${incidentId}`);
+    }
+  };
+
+  const handleUpdateIncident = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canEdit) return;
+    try {
+      await updateDoc(doc(db, 'incidents', incidentId), {
+        ...editFormData,
+        startDate: incident?.startDate // keep original start date
+      });
+      setShowEditModal(false);
     } catch (error) {
       handleFirestoreError(error, 'update' as any, `incidents/${incidentId}`);
     }
@@ -113,11 +136,13 @@ export default function Dashboard({ incidentId }: DashboardProps) {
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="relative group">
             <select 
+              disabled={!canEdit}
               value={incident?.status}
               onChange={(e) => handleStatusChange(e.target.value)}
               className={cn(
                 "appearance-none bg-[#141414] border border-white/5 pl-10 pr-10 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] outline-none cursor-pointer hover:bg-white/5 transition-all text-white",
-                currentStatus.color
+                currentStatus.color,
+                !canEdit && "opacity-50 cursor-not-allowed"
               )}
             >
               {STATUS_OPTIONS.map(opt => (
@@ -127,13 +152,24 @@ export default function Dashboard({ incidentId }: DashboardProps) {
               ))}
             </select>
             <div className={cn("absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full animate-pulse", currentStatus.dot)}></div>
-            <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+            {canEdit && <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />}
+            {!canEdit && <Lock size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />}
           </div>
           
           <div className="bg-[#141414] border border-white/5 px-4 py-2.5 rounded-xl flex items-center gap-3">
             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Sistemas OK</span>
           </div>
+          
+          {canEdit && (
+            <button 
+              onClick={() => setShowEditModal(true)}
+              className="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all group"
+            >
+              <Shield size={14} className="text-orange-600" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Editar Ocorrência</span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -239,6 +275,85 @@ export default function Dashboard({ incidentId }: DashboardProps) {
         </div>
         <div className="font-mono text-orange-500/50">FIREMONITOR v2.4.0</div>
       </footer>
+
+      {showEditModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="bg-[#141414] border border-white/10 p-8 rounded-1xl w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+               <div className="p-2 bg-orange-600/10 rounded-lg text-orange-600"><Shield size={20}/></div>
+               <div>
+                  <h3 className="text-xl font-bold text-white uppercase tracking-tighter italic">Editar Ocorrência</h3>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Alterar informações base</p>
+               </div>
+            </div>
+
+            <form onSubmit={handleUpdateIncident} className="space-y-5">
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block">NOME DA OPERAÇÃO</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 text-white uppercase font-bold"
+                  value={editFormData.name || ''}
+                  onChange={(e) => setEditFormData({...editFormData, name: e.target.value.toUpperCase()})}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block">LOCALIZAÇÃO</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 text-white uppercase font-bold"
+                  value={editFormData.location || ''}
+                  onChange={(e) => setEditFormData({...editFormData, location: e.target.value.toUpperCase()})}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block">COORDENADAS</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 text-white font-mono"
+                  value={editFormData.coordinates || ''}
+                  onChange={(e) => setEditFormData({...editFormData, coordinates: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block flex items-center gap-2">
+                  <Key size={12} className="text-orange-600" />
+                  SENHA DE ACESSO
+                </label>
+                <input 
+                  type="text" 
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 text-white font-mono"
+                  value={editFormData.password || ''}
+                  onChange={(e) => setEditFormData({...editFormData, password: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block">DESCRIÇÃO</label>
+                <textarea 
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 text-white uppercase font-bold min-h-[100px]"
+                  value={editFormData.description || ''}
+                  onChange={(e) => setEditFormData({...editFormData, description: e.target.value.toUpperCase()})}
+                />
+              </div>
+              <div className="flex gap-4 pt-6 border-t border-white/5">
+                <button 
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 px-4 py-3 rounded-lg border border-white/10 text-slate-500 hover:text-white font-black text-[10px] uppercase"
+                >
+                  CANCELAR
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 px-4 py-3 rounded-lg bg-orange-700 text-white hover:bg-orange-600 font-black text-[10px] uppercase"
+                >
+                  SALVAR ALTERAÇÕES
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

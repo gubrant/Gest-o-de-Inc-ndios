@@ -30,7 +30,9 @@ service cloud.firestore {
              data.status in ['active_no_resources', 'active_combat', 'mopping_up', 'surveillance', 'controlled'] &&
              data.startDate is int &&
              (!('coordinates' in data) || data.coordinates is string) &&
-             (!('description' in data) || data.description is string);
+             (!('description' in data) || data.description is string) &&
+             (!('password' in data) || data.password is string) &&
+             (!('createdBy' in data) || data.createdBy is string);
     }
 
     // Person validation

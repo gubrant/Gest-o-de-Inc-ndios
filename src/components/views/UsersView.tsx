@@ -17,6 +17,7 @@ export default function UsersView() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<AppUser | null>(null);
   const [formData, setFormData] = useState({
     login: '',
     password: '',
@@ -39,16 +40,40 @@ export default function UsersView() {
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await addDoc(collection(db, path), {
-        ...formData,
-        login: formData.login.toLowerCase(),
-        createdAt: Date.now()
-      });
+      if (editingUser) {
+        await updateDoc(doc(db, path, editingUser.id!), {
+          ...formData,
+          login: formData.login.toLowerCase()
+        });
+      } else {
+        await addDoc(collection(db, path), {
+          ...formData,
+          login: formData.login.toLowerCase(),
+          createdAt: Date.now()
+        });
+      }
       setShowAddModal(false);
+      setEditingUser(null);
       setFormData({ login: '', password: '', role: 'operator' });
     } catch (error) {
-      handleFirestoreError(error, 'create' as any, path);
+      handleFirestoreError(error, editingUser ? 'update' as any : 'create' as any, path);
     }
+  };
+
+  const handleEditClick = (user: AppUser) => {
+    setEditingUser(user);
+    setFormData({
+      login: user.login,
+      password: user.password,
+      role: user.role
+    });
+    setShowAddModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowAddModal(false);
+    setEditingUser(null);
+    setFormData({ login: '', password: '', role: 'operator' });
   };
 
   const deleteUser = async (id: string) => {
@@ -139,15 +164,25 @@ export default function UsersView() {
                       </span>
                     </td>
                     <td className="p-4 font-mono text-[10px] text-slate-600">
-                      ••••••••
+                      {u.password}
                     </td>
                     <td className="p-4 text-right">
-                      <button 
-                         onClick={() => deleteUser(u.id!)}
-                         className="p-2 text-slate-600 hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                           onClick={() => handleEditClick(u)}
+                           className="p-2 text-slate-500 hover:text-orange-500 transition-colors"
+                           title="Editar"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button 
+                           onClick={() => deleteUser(u.id!)}
+                           className="p-2 text-slate-500 hover:text-red-500 transition-colors"
+                           title="Excluir"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -169,9 +204,9 @@ export default function UsersView() {
               <div className="p-6 border-b border-white/5 flex items-center justify-between bg-orange-600/5">
                 <h3 className="text-white font-black italic uppercase tracking-tighter flex items-center gap-2">
                   <UserPlus size={18} className="text-orange-600" />
-                  Cadastrar Operador
+                  {editingUser ? 'Editar Operador' : 'Cadastrar Operador'}
                 </h3>
-                <button onClick={() => setShowAddModal(false)} className="text-slate-500 hover:text-white transition-colors uppercase text-[9px] font-black tracking-widest">Fechar</button>
+                <button onClick={handleCloseModal} className="text-slate-500 hover:text-white transition-colors uppercase text-[9px] font-black tracking-widest">Fechar</button>
               </div>
               
               <form onSubmit={handleAddUser} className="p-6 space-y-6">
@@ -216,7 +251,7 @@ export default function UsersView() {
                     type="submit"
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest transition-all shadow-[0_0_20px_rgba(234,88,12,0.3)] flex items-center justify-center gap-3"
                   >
-                    Ativar Usuário
+                    {editingUser ? 'Atualizar Dados' : 'Ativar Usuário'}
                     <Check size={16} />
                   </button>
                 </div>

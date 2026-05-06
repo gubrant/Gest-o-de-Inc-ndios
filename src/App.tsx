@@ -44,6 +44,7 @@ function AppContent() {
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [isViewingUsers, setIsViewingUsers] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -97,7 +98,10 @@ function AppContent() {
 
   const handleLogout = () => {
     setUser(null);
+    setSelectedIncident(null);
+    setIsViewingUsers(false);
     localStorage.removeItem('sgf_user');
+    localStorage.removeItem('sgf_selected_incident');
   };
 
   const handleSelectIncident = (incident: Incident) => {
@@ -123,7 +127,38 @@ function AppContent() {
   }
 
   if (!selectedIncident) {
-    return <IncidentsView onSelect={handleSelectIncident} user={user} onLogout={handleLogout} />;
+    if (isViewingUsers && user.role === 'admin') {
+      return (
+        <div className="min-h-screen bg-[#0A0A0A] flex flex-col">
+          <div className="p-6 lg:p-12 max-w-6xl mx-auto w-full flex justify-between items-center no-print">
+            <button 
+              onClick={() => setIsViewingUsers(false)}
+              className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-xl flex items-center gap-2 hover:bg-white/10 transition-all font-black uppercase text-[10px] tracking-widest"
+            >
+              <ArrowLeft size={16} />
+              Voltar aos Incidentes
+            </button>
+            <div className="bg-[#121212] border border-white/5 px-4 py-2 rounded-2xl flex items-center gap-4">
+               <Shield size={16} className="text-orange-600" />
+               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Gestão de Usuários</span>
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-6 pb-12">
+            <div className="max-w-6xl mx-auto">
+               <UsersView />
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <IncidentsView 
+        onSelect={handleSelectIncident} 
+        user={user} 
+        onLogout={handleLogout} 
+        onGoToUsers={() => setIsViewingUsers(true)}
+      />
+    );
   }
 
   const menuItems = [
@@ -243,7 +278,7 @@ function AppContent() {
               className="p-8 h-full"
             >
               <Routes>
-                <Route path="/" element={<Dashboard incidentId={selectedIncident.id!} />} />
+                <Route path="/" element={<Dashboard incidentId={selectedIncident.id!} user={user} />} />
                 <Route path="/people" element={<PeopleView incidentId={selectedIncident.id!} />} />
                 <Route path="/vehicles" element={<VehiclesView incidentId={selectedIncident.id!} />} />
                 <Route path="/materials" element={<MaterialsView incidentId={selectedIncident.id!} />} />

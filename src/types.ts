@@ -12,6 +12,8 @@ export interface Incident {
   status: 'active_no_resources' | 'active_combat' | 'mopping_up' | 'surveillance' | 'controlled';
   startDate: number;
   description?: string;
+  password?: string;
+  createdBy?: string;
 }
 
 export interface Person {
