@@ -202,7 +202,8 @@ function AppContent() {
                 Menu
               </button>
             </div>
-            <h2 className="font-black text-xl leading-none uppercase tracking-tighter text-white">SGF-FLORESTAL</h2>
+            <h2 className="font-black text-lg leading-none uppercase tracking-tighter text-white">Gestão de Incêndios</h2>
+            <div className="text-[8px] font-black text-orange-600/60 uppercase tracking-[0.2em] mt-1">Monitoramento Florestal</div>
             {selectedIncident && (
               <div className="mt-3 flex items-center gap-2 text-slate-500 overflow-hidden bg-black/20 p-2 rounded border border-white/5">
                 <Flame size={12} className="text-orange-600 flex-shrink-0" />

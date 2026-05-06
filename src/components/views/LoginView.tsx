@@ -40,7 +40,7 @@ export default function LoginView({ onLogin }: LoginViewProps) {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-600 rounded-2xl shadow-[0_0_40px_rgba(234,88,12,0.4)] mb-6 transform -rotate-3">
              <Shield size={40} className="text-white" />
           </div>
-          <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none mb-2">SGF-FLORESTAL</h1>
+          <h1 className="text-3xl sm:text-4xl font-black text-white italic uppercase tracking-tighter leading-none mb-2">Gestão de Incêndios Florestais</h1>
           <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] font-mono">Gestão • Controle • Operação</p>
         </div>
 
