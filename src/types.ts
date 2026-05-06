@@ -14,6 +14,8 @@ export interface Incident {
   description?: string;
   password?: string;
   createdBy?: string;
+  allowedUsers?: string[]; // IDs or logins of users allowed to see this
+  finishedAt?: number;
 }
 
 export interface Person {

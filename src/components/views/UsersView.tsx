@@ -91,32 +91,32 @@ export default function UsersView() {
 
   return (
     <div className="h-full flex flex-col">
-      <header className="flex items-center justify-between mb-8 bg-[#121212] p-6 rounded-2xl border border-white/5 relative overflow-hidden">
+      <header className="flex items-center justify-between mb-8 bg-white p-6 rounded-2xl border border-slate-200 relative overflow-hidden shadow-sm">
         <div className="absolute top-0 left-0 w-1 h-full bg-orange-600"></div>
         <div className="flex items-center gap-4">
-          <div className="bg-orange-600/20 p-2.5 rounded-xl">
-             <Shield className="text-orange-500" size={24} />
+          <div className="bg-orange-600/10 p-2.5 rounded-xl">
+             <Shield className="text-orange-600" size={24} />
           </div>
           <div>
-            <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">Controle de Acessos</h2>
+            <h2 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter leading-none">Controle de Acessos</h2>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">Gestão de Identidades e Permissões</p>
           </div>
         </div>
         
         <div className="flex gap-4">
           <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input 
               type="text" 
               placeholder="BUSCAR USUÁRIO..."
-              className="bg-[#1A1A1A] border-white/5 border rounded-xl text-[10px] py-2.5 pl-10 pr-4 outline-none text-white font-bold transition-all focus:border-orange-600 w-64 uppercase tracking-widest"
+              className="bg-slate-50 border-slate-200 border rounded-xl text-[10px] py-2.5 pl-10 pr-4 outline-none text-slate-900 font-bold transition-all focus:border-orange-600 w-64 uppercase tracking-widest"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button 
             onClick={() => setShowAddModal(true)}
-            className="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(234,88,12,0.3)]"
+            className="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-2 shadow-xl shadow-slate-200"
           >
             <UserPlus size={16} />
             Novo Operador
@@ -124,18 +124,18 @@ export default function UsersView() {
         </div>
       </header>
 
-      <div className="flex-1 bg-[#121212] rounded-2xl border border-white/5 overflow-hidden">
+      <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-lg">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-[#0A0A0A]">
+            <thead className="bg-slate-50">
               <tr>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5">Identificação</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5">Nível de Acesso</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5">Senha Atual</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5 text-right">Controle</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200">Identificação</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200">Nível de Acesso</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200">Senha Atual</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200 text-right">Controle</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
                   <td colSpan={4} className="p-8 text-center text-slate-500 font-mono text-[10px] uppercase tracking-widest">Carregando base de dados...</td>
@@ -146,38 +146,38 @@ export default function UsersView() {
                 </tr>
               ) : (
                 filteredUsers.map(u => (
-                  <tr key={u.id} className="hover:bg-white/[0.02] transition-colors group">
+                  <tr key={u.id} className="hover:bg-slate-50 transition-colors group">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 border border-white/10 group-hover:bg-orange-600/10 group-hover:text-orange-500 transition-colors">
+                        <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 border border-slate-200 group-hover:bg-orange-600/10 group-hover:text-orange-600 transition-colors">
                           <User size={16} />
                         </div>
-                        <span className="text-sm font-bold text-white uppercase tracking-tighter">{u.login}</span>
+                        <span className="text-sm font-bold text-slate-900 uppercase tracking-tighter">{u.login}</span>
                       </div>
                     </td>
                     <td className="p-4">
                       <span className={cn(
                         "px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border",
-                        u.role === 'admin' ? "bg-orange-600/10 border-orange-600/30 text-orange-500" : "bg-slate-800 border-white/5 text-slate-400"
+                        u.role === 'admin' ? "bg-orange-600/10 border-orange-600 text-orange-600" : "bg-slate-100 border-slate-200 text-slate-500"
                       )}>
                         {u.role === 'admin' ? 'Administrador' : 'Operador Padrão'}
                       </span>
                     </td>
-                    <td className="p-4 font-mono text-[10px] text-slate-600">
+                    <td className="p-4 font-mono text-[10px] text-slate-500">
                       {u.password}
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
                            onClick={() => handleEditClick(u)}
-                           className="p-2 text-slate-500 hover:text-orange-500 transition-colors"
+                           className="p-2 text-slate-400 hover:text-orange-600 transition-colors"
                            title="Editar"
                         >
                           <Edit2 size={16} />
                         </button>
                         <button 
                            onClick={() => deleteUser(u.id!)}
-                           className="p-2 text-slate-500 hover:text-red-500 transition-colors"
+                           className="p-2 text-slate-400 hover:text-red-600 transition-colors"
                            title="Excluir"
                         >
                           <Trash2 size={16} />
@@ -194,19 +194,19 @@ export default function UsersView() {
 
       <AnimatePresence>
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[100] backdrop-blur-md">
+          <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-[100] backdrop-blur-md">
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#121212] border border-white/10 w-full max-w-md rounded-3xl overflow-hidden shadow-2xl shadow-orange-900/10"
+              className="bg-white border border-slate-200 w-full max-w-md rounded-3xl overflow-hidden shadow-2xl"
             >
-              <div className="p-6 border-b border-white/5 flex items-center justify-between bg-orange-600/5">
-                <h3 className="text-white font-black italic uppercase tracking-tighter flex items-center gap-2">
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-orange-600/5">
+                <h3 className="text-slate-900 font-black italic uppercase tracking-tighter flex items-center gap-2">
                   <UserPlus size={18} className="text-orange-600" />
                   {editingUser ? 'Editar Operador' : 'Cadastrar Operador'}
                 </h3>
-                <button onClick={handleCloseModal} className="text-slate-500 hover:text-white transition-colors uppercase text-[9px] font-black tracking-widest">Fechar</button>
+                <button onClick={handleCloseModal} className="text-slate-500 hover:text-slate-900 transition-colors uppercase text-[9px] font-black tracking-widest">Fechar</button>
               </div>
               
               <form onSubmit={handleAddUser} className="p-6 space-y-6">
@@ -216,7 +216,7 @@ export default function UsersView() {
                     required
                     type="text" 
                     placeholder="EX: JOAO.SILVA"
-                    className="w-full bg-[#1A1A1A] border-white/5 border rounded-xl text-sm p-4 outline-none text-white font-bold uppercase transition-all focus:border-orange-600"
+                    className="w-full bg-slate-50 border-slate-200 border rounded-xl text-sm p-4 outline-none text-slate-900 font-bold uppercase transition-all focus:border-orange-600"
                     value={formData.login}
                     onChange={(e) => setFormData({...formData, login: e.target.value.toLowerCase()})}
                   />
@@ -228,7 +228,7 @@ export default function UsersView() {
                     required
                     type="text" 
                     placeholder="MÍNIMO 4 CARACTERES"
-                    className="w-full bg-[#1A1A1A] border-white/5 border rounded-xl text-sm p-4 outline-none text-white font-bold transition-all focus:border-orange-600"
+                    className="w-full bg-slate-50 border-slate-200 border rounded-xl text-sm p-4 outline-none text-slate-900 font-bold transition-all focus:border-orange-600"
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
                   />
@@ -237,7 +237,7 @@ export default function UsersView() {
                 <div>
                   <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">NÍVEL DE PRIVILÉGIO</label>
                   <select 
-                    className="w-full bg-[#1A1A1A] border-white/5 border rounded-xl text-sm p-4 outline-none text-white font-bold uppercase transition-all focus:border-orange-600"
+                    className="w-full bg-slate-50 border-slate-200 border rounded-xl text-sm p-4 outline-none text-slate-900 font-bold uppercase transition-all focus:border-orange-600"
                     value={formData.role}
                     onChange={(e) => setFormData({...formData, role: e.target.value as any})}
                   >
@@ -249,7 +249,7 @@ export default function UsersView() {
                 <div className="pt-4">
                   <button 
                     type="submit"
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest transition-all shadow-[0_0_20px_rgba(234,88,12,0.3)] flex items-center justify-center gap-3"
+                    className="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest transition-all shadow-xl shadow-slate-200 flex items-center justify-center gap-3"
                   >
                     {editingUser ? 'Atualizar Dados' : 'Ativar Usuário'}
                     <Check size={16} />

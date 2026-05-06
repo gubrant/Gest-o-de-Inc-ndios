@@ -81,25 +81,25 @@ export default function ResourcesView({ incidentId }: ResourcesViewProps) {
     <div className="space-y-6 pb-20">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-black tracking-tighter text-white uppercase italic">Recursos Externos</h2>
+          <h2 className="text-3xl font-black tracking-tighter text-slate-900 uppercase italic">Recursos Externos</h2>
           <p className="text-slate-500 text-xs font-mono uppercase tracking-widest mt-1 italic">Catálogo de Parceiros e Infraestrutura</p>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
-          className="bg-orange-600 hover:bg-orange-500 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-950/20 text-[10px]"
+          className="bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-black uppercase tracking-widest transition-all shadow-xl shadow-slate-200 text-[10px]"
         >
           <Plus size={16} />
           Novo Recurso
         </button>
       </div>
 
-      <div className="bg-[#141414] border border-white/5 rounded-xl overflow-hidden shadow-2xl">
-        <div className="p-4 border-b border-white/5 bg-[#1A1A1A]/50 flex items-center gap-4">
-          <Search className="text-slate-600" size={16} />
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg">
+        <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-4">
+          <Search className="text-slate-400" size={16} />
           <input 
             type="text" 
             placeholder="BUSCAR PARCEIRO, MÁQUINA OU DESCRIÇÃO..." 
-            className="bg-transparent border-none focus:ring-0 text-[10px] font-bold uppercase tracking-widest w-full text-slate-200 placeholder:text-slate-600"
+            className="bg-transparent border-none focus:ring-0 text-[10px] font-bold uppercase tracking-widest w-full text-slate-900 placeholder:text-slate-400 outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -107,46 +107,46 @@ export default function ResourcesView({ incidentId }: ResourcesViewProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
           {filteredResources.map(resource => (
-             <div key={resource.id} className="bg-[#1A1A1A] border border-white/5 p-6 rounded-xl hover:border-orange-500/30 transition-all group flex flex-col">
+             <div key={resource.id} className="bg-white border border-slate-200 p-6 rounded-xl hover:border-orange-500 transition-all group flex flex-col shadow-sm">
                 <div className="flex items-start justify-between mb-5">
-                  <div className="p-3 bg-white/5 rounded-lg text-slate-400 group-hover:text-orange-500 transition-colors">
+                  <div className="p-3 bg-slate-50 rounded-lg text-slate-400 group-hover:text-orange-600 transition-colors border border-slate-100">
                     {resourceIcons[resource.type]}
                   </div>
-                  <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] italic border-b border-white/5 pb-1">{typeLabels[resource.type]}</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic border-b border-slate-100 pb-1">{typeLabels[resource.type]}</span>
                 </div>
-                <h3 className="font-black text-xl text-white mb-2 uppercase tracking-tighter italic">{resource.name}</h3>
+                <h3 className="font-black text-xl text-slate-900 mb-2 uppercase tracking-tighter italic">{resource.name}</h3>
                 <p className="text-[11px] text-slate-500 mb-6 font-bold uppercase tracking-widest leading-relaxed flex-1 line-clamp-3">{resource.description}</p>
-                <div className="pt-4 border-t border-white/5 flex items-center gap-3 bg-[#0A0A0A]/30 -mx-6 -mb-6 p-4 mt-auto">
+                <div className="pt-4 border-t border-slate-100 flex items-center gap-3 bg-slate-50 -mx-6 -mb-6 p-4 mt-auto">
                    <div className="p-2 bg-orange-600/10 rounded">
                       <PhoneCall size={14} className="text-orange-600" />
                    </div>
                    <div>
-                      <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-0.5">Contato Direto</p>
-                      <p className="text-xs font-mono font-bold text-white uppercase tracking-tighter">{resource.contact}</p>
+                      <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Contato Direto</p>
+                      <p className="text-xs font-mono font-bold text-slate-900 uppercase tracking-tighter">{resource.contact}</p>
                    </div>
                 </div>
              </div>
           ))}
           {filteredResources.length === 0 && !loading && (
             <div className="col-span-full py-20 text-center">
-               <div className="inline-block p-4 bg-white/5 rounded-full text-slate-700 mb-4"><Search size={32}/></div>
-               <p className="text-slate-600 uppercase font-black text-[10px] tracking-[0.3em]">Nenhum recurso encontrado na base</p>
+               <div className="inline-block p-4 bg-slate-50 rounded-full text-slate-200 mb-4 border border-slate-100"><Search size={32}/></div>
+               <p className="text-slate-400 uppercase font-black text-[10px] tracking-[0.3em]">Nenhum recurso encontrado na base</p>
             </div>
           )}
         </div>
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#141414] border border-white/10 p-8 rounded-1xl w-full max-w-md shadow-2xl"
+            className="bg-white border border-slate-200 p-8 rounded-2xl w-full max-w-md shadow-2xl"
           >
-            <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
                <div className="p-2 bg-orange-600/10 rounded-lg text-orange-600"><Plus size={20}/></div>
                <div>
-                  <h3 className="text-xl font-bold text-white uppercase tracking-tighter italic">Novo Recurso</h3>
+                  <h3 className="text-xl font-bold text-slate-900 uppercase tracking-tighter italic">Novo Recurso</h3>
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Inclusão em Registro Operacional</p>
                </div>
             </div>
@@ -157,7 +157,7 @@ export default function ResourcesView({ incidentId }: ResourcesViewProps) {
                 <input 
                   required
                   type="text" 
-                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold"
+                  className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 uppercase font-bold"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value.toUpperCase()})}
                 />
@@ -166,7 +166,7 @@ export default function ResourcesView({ incidentId }: ResourcesViewProps) {
                 <div>
                   <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">TIPO DE RECURSO</label>
                   <select 
-                    className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white font-bold uppercase"
+                    className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 font-bold uppercase"
                     value={formData.type}
                     onChange={(e) => setFormData({...formData, type: e.target.value as ExternalResourceType})}
                   >
@@ -182,7 +182,7 @@ export default function ResourcesView({ incidentId }: ResourcesViewProps) {
                     required
                     placeholder="(00) 0000-0000"
                     type="text" 
-                    className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white font-bold"
+                    className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 font-bold"
                     value={formData.contact}
                     onChange={(e) => setFormData({...formData, contact: e.target.value.toUpperCase()})}
                   />
@@ -192,22 +192,22 @@ export default function ResourcesView({ incidentId }: ResourcesViewProps) {
                 <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">DESCRIÇÃO / OBSERVAÇÕES</label>
                 <textarea 
                   placeholder="EX: ESCAVADEIRA HIDRÁULICA, DEPÓSITO DE COMBUSTÍVEL..."
-                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold min-h-[100px]"
+                  className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 uppercase font-bold min-h-[100px]"
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value.toUpperCase()})}
                 />
               </div>
-              <div className="flex gap-4 pt-6 border-t border-white/5">
+              <div className="flex gap-4 pt-6 border-t border-slate-100">
                 <button 
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-3 rounded-lg border border-white/10 text-slate-500 hover:text-white hover:bg-white/5 font-black transition-all text-[10px] uppercase tracking-widest"
+                  className="flex-1 px-4 py-3 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-black transition-all text-[10px] uppercase tracking-widest"
                 >
                   ABORTAR
                 </button>
                 <button 
                   type="submit"
-                  className="flex-1 px-4 py-3 rounded-lg bg-orange-700 text-white hover:bg-orange-600 font-black transition-all shadow-xl shadow-orange-950/20 text-[10px] uppercase tracking-widest"
+                  className="flex-1 px-4 py-3 rounded-lg bg-slate-900 text-white hover:bg-black font-black transition-all shadow-xl shadow-slate-200 text-[10px] uppercase tracking-widest"
                 >
                   REGISTRAR
                 </button>

@@ -34,11 +34,11 @@ import UsersView from './components/views/UsersView';
     className={cn(
       "flex items-center gap-3 px-6 py-3 transition-all duration-200 group text-sm font-medium",
       active 
-        ? "bg-white/5 border-r-2 border-orange-500 text-white shadow-inner" 
-        : "text-slate-400 hover:text-white hover:bg-white/5"
+        ? "bg-slate-100 border-r-2 border-orange-600 text-slate-900 shadow-sm" 
+        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
     )}
   >
-    <Icon size={18} className={cn(active ? "text-orange-500" : "text-slate-500 group-hover:text-orange-400/70")} />
+    <Icon size={18} className={cn(active ? "text-orange-600" : "text-slate-400 group-hover:text-orange-500/70")} />
     <span className="tracking-tight">{label}</span>
   </Link>
 );
@@ -126,7 +126,7 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -139,18 +139,18 @@ function AppContent() {
   if (!selectedIncident) {
     if (isViewingUsers && user.role === 'admin') {
       return (
-        <div className="min-h-screen bg-[#0A0A0A] flex flex-col">
+        <div className="min-h-screen bg-[#F5F5F5] flex flex-col">
           <div className="p-6 lg:p-12 max-w-6xl mx-auto w-full flex justify-between items-center no-print">
             <button 
               onClick={() => setIsViewingUsers(false)}
-              className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-xl flex items-center gap-2 hover:bg-white/10 transition-all font-black uppercase text-[10px] tracking-widest"
+              className="px-4 py-2 bg-white border border-slate-200 text-slate-900 rounded-xl flex items-center gap-2 hover:bg-slate-50 transition-all font-black uppercase text-[10px] tracking-widest shadow-sm"
             >
               <ArrowLeft size={16} />
               Voltar aos Incidentes
             </button>
-            <div className="bg-[#121212] border border-white/5 px-4 py-2 rounded-2xl flex items-center gap-4">
+            <div className="bg-white border border-slate-100 px-4 py-2 rounded-2xl flex items-center gap-4 shadow-sm">
                <Shield size={16} className="text-orange-600" />
-               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Gestão de Usuários</span>
+               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">Gestão de Usuários</span>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto px-6 pb-12">
@@ -190,32 +190,32 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-slate-100 flex font-sans overflow-hidden">
+    <div className="min-h-screen bg-[#F5F5F5] text-slate-900 flex font-sans overflow-hidden">
       {/* Sidebar */}
       <aside className={cn(
-        "fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#141414] border-r border-white/10 transition-transform duration-300 lg:translate-x-0 flex flex-col shadow-2xl",
+        "fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transition-transform duration-300 lg:translate-x-0 flex flex-col shadow-xl",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex flex-col h-full">
-          <div className="p-6 border-b border-white/5 bg-[#1A1A1A]">
+          <div className="p-6 border-b border-slate-100 bg-slate-50">
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2 text-orange-500">
-                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.8)]"></div>
+              <div className="flex items-center gap-2 text-orange-600">
+                <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse shadow-[0_0_8px_rgba(234,88,12,0.4)]"></div>
                 <span className="font-bold tracking-[0.2em] text-[10px] uppercase">Operação Ativa</span>
               </div>
               <button 
                 onClick={handleClearIncident}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-orange-600/20 text-slate-500 hover:text-orange-500 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border border-white/5 shadow-inner"
+                className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-orange-50 text-slate-500 hover:text-orange-600 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border border-slate-200 shadow-sm"
                 title="Retornar ao Menu de Incidentes"
               >
                 <ArrowLeft size={12} />
                 Menu
               </button>
             </div>
-            <h2 className="font-black text-lg leading-none uppercase tracking-tighter text-white">Gestão de Incêndios</h2>
-            <div className="text-[8px] font-black text-orange-600/60 uppercase tracking-[0.2em] mt-1">Monitoramento Florestal</div>
+            <h2 className="font-black text-lg leading-none uppercase tracking-tighter text-slate-900">Gestão de Incêndios</h2>
+            <div className="text-[8px] font-black text-orange-600/70 uppercase tracking-[0.2em] mt-1">Monitoramento Florestal</div>
             {selectedIncident && (
-              <div className="mt-3 flex items-center gap-2 text-slate-500 overflow-hidden bg-black/20 p-2 rounded border border-white/5">
+              <div className="mt-3 flex items-center gap-2 text-slate-600 overflow-hidden bg-slate-100 p-2 rounded border border-slate-200">
                 <Flame size={12} className="text-orange-600 flex-shrink-0" />
                 <span className="text-[10px] font-bold uppercase tracking-widest truncate italic opacity-80">
                   {selectedIncident.name}
@@ -238,13 +238,13 @@ function AppContent() {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-white/5 space-y-4">
+          <div className="p-4 border-t border-slate-100 space-y-4">
             <div className="flex items-center gap-3 px-2">
-              <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white border border-white/10 shadow-[0_0_10px_rgba(234,88,12,0.3)]">
+              <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white border border-white/10 shadow-sm">
                  <Shield size={14}/>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold truncate text-slate-200">{user.login}</p>
+                <p className="text-xs font-bold truncate text-slate-900">{user.login}</p>
                 <div className="flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
                   <p className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">{user.role === 'admin' ? 'Admin Online' : 'Operador Online'}</p>
@@ -252,7 +252,7 @@ function AppContent() {
               </div>
               <button 
                 onClick={handleLogout}
-                className="p-2 text-slate-500 hover:text-white transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-900 transition-colors"
                 title="Log Out"
               >
                 <LogOut size={14} />
@@ -264,14 +264,14 @@ function AppContent() {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 h-screen">
-        <header className="h-16 border-b border-white/5 bg-[#0A0A0A]/80 backdrop-blur-xl flex items-center justify-between px-8 sticky top-0 z-30">
+        <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-xl flex items-center justify-between px-8 sticky top-0 z-30">
           <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden p-2 text-slate-500 hover:text-slate-900 transition-colors">
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-1 h-4 bg-orange-500 rounded-full"></div>
-              <h1 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-400">
+              <div className="w-1 h-4 bg-orange-600 rounded-full"></div>
+              <h1 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-500">
                 {menuItems.find(m => m.to === location.pathname)?.label || "Sistema"}
               </h1>
             </div>

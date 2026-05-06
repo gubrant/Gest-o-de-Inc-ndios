@@ -89,12 +89,12 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
     <div className="space-y-6 pb-20">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-black tracking-tighter text-white uppercase italic">Equipes de Combate</h2>
+          <h2 className="text-3xl font-black tracking-tighter text-slate-900 uppercase italic">Equipes de Combate</h2>
           <p className="text-slate-500 text-xs font-mono uppercase tracking-widest mt-1 italic">Organização Tática e Emprego Operacional</p>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
-          className="bg-orange-600 hover:bg-orange-500 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-950/20 text-[10px]"
+          className="bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-black uppercase tracking-widest transition-all shadow-xl shadow-slate-200 text-[10px]"
         >
           <Plus size={16} />
           Formar Nova Equipe
@@ -103,16 +103,16 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {teams.map(team => (
-          <div key={team.id} className="bg-[#141414] border border-white/5 rounded-xl overflow-hidden shadow-2xl flex flex-col group hover:border-orange-500/30 transition-all">
-            <div className="p-4 border-b border-white/5 flex justify-between items-start bg-[#1A1A1A]/50">
+          <div key={team.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg flex flex-col group hover:border-orange-600 transition-all">
+            <div className="p-4 border-b border-slate-100 flex justify-between items-start bg-slate-50">
               <div>
-                <h3 className="text-lg font-black text-white italic uppercase tracking-tighter">{team.name}</h3>
+                <h3 className="text-lg font-black text-slate-900 italic uppercase tracking-tighter">{team.name}</h3>
                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Equipe de Resposta</p>
               </div>
               <div className={cn(
                 "px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest",
-                team.status === 'field' ? "bg-orange-600 text-white" : 
-                team.status === 'base' ? "bg-green-600 text-white" : "bg-slate-800 text-slate-500"
+                team.status === 'field' ? "bg-orange-600 text-white shadow-sm shadow-orange-100" : 
+                team.status === 'base' ? "bg-green-600 text-white shadow-sm shadow-green-100" : "bg-slate-100 text-slate-400"
               )}>
                 {team.status === 'field' ? 'EM CAMPO' : team.status === 'base' ? 'NA BASE' : 'CONCLUÍDO'}
               </div>
@@ -120,12 +120,12 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
             
             <div className="p-4 flex-1 space-y-3">
               <div>
-                <p className="text-[9px] uppercase tracking-widest font-bold text-slate-600 mb-2 border-b border-white/5 pb-1">Componentes ({team.memberIds.length})</p>
+                <p className="text-[9px] uppercase tracking-widest font-bold text-slate-400 mb-2 border-b border-slate-100 pb-1">Componentes ({team.memberIds.length})</p>
                 <div className="flex flex-wrap gap-1">
                   {team.memberIds.map((mId, idx) => {
                     const person = people.find(p => p.id === mId);
                     return (
-                      <span key={idx} className="text-[10px] bg-white/5 text-slate-400 px-2 py-0.5 rounded border border-white/5 font-bold uppercase tracking-tight">
+                      <span key={idx} className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200 font-bold uppercase tracking-tight">
                         {person?.name || 'Não identificado'}
                       </span>
                     );
@@ -133,18 +133,18 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
                 </div>
               </div>
               {team.status === 'field' && team.currentLocation && (
-                <div className="flex items-center gap-2 text-[10px] text-orange-500 font-bold uppercase mt-2 bg-orange-500/5 p-2 rounded border border-orange-500/10">
+                <div className="flex items-center gap-2 text-[10px] text-orange-600 font-bold uppercase mt-2 bg-orange-50 p-2 rounded border border-orange-200">
                    <MapPin size={12} />
                    LOC: {team.currentLocation}
                 </div>
               )}
             </div>
 
-            <div className="p-3 bg-[#0A0A0A]/50 flex gap-2 border-t border-white/5">
+            <div className="p-3 bg-slate-50/50 flex gap-2 border-t border-slate-100">
               <button 
                 onClick={() => updateStatus(team, 'field')}
                 className={cn("flex-1 text-[9px] font-black uppercase tracking-widest py-2 rounded transition-all", 
-                  team.status === 'field' ? "bg-orange-600/20 text-orange-400 border border-orange-500/20" : "bg-white/5 text-slate-500 hover:text-white"
+                  team.status === 'field' ? "bg-orange-600 text-white shadow-md shadow-orange-100" : "bg-white border border-slate-200 text-slate-400 hover:text-slate-600 shadow-sm"
                 )}
               >
                 Campo
@@ -152,14 +152,14 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
               <button 
                 onClick={() => updateStatus(team, 'base')}
                 className={cn("flex-1 text-[9px] font-black uppercase tracking-widest py-2 rounded transition-all", 
-                  team.status === 'base' ? "bg-green-600/20 text-green-400 border border-green-500/20" : "bg-white/5 text-slate-500 hover:text-white"
+                  team.status === 'base' ? "bg-green-600 text-white shadow-md shadow-green-100" : "bg-white border border-slate-200 text-slate-400 hover:text-slate-600 shadow-sm"
                 )}
               >
                 Base
               </button>
               <button 
                 onClick={() => updateStatus(team, 'left')}
-                className="flex-1 text-[9px] font-black uppercase tracking-widest py-2 rounded bg-white/5 text-slate-500 hover:bg-white/10"
+                className="flex-1 text-[9px] font-black uppercase tracking-widest py-2 rounded bg-white border border-slate-200 text-slate-400 hover:text-slate-900 shadow-sm transition-all"
               >
                 Sair
               </button>
@@ -169,16 +169,16 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#141414] border border-white/10 p-8 rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+            className="bg-white border border-slate-200 p-8 rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
           >
-            <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
                <div className="p-2 bg-orange-600/10 rounded-lg text-orange-600"><Plus size={20}/></div>
                <div>
-                  <h3 className="text-xl font-bold text-white uppercase tracking-tighter italic">Composição de Equipe</h3>
+                  <h3 className="text-xl font-bold text-slate-900 uppercase tracking-tighter italic">Composição de Equipe</h3>
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Escalação de Componentes e Recursos</p>
                </div>
             </div>
@@ -190,7 +190,7 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
                   required
                   placeholder="EX: GUARANI 01"
                   type="text" 
-                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold"
+                  className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 uppercase font-bold"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value.toUpperCase()})}
                 />
@@ -207,15 +207,15 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
                       className={cn(
                         "p-3 rounded border text-left transition-all flex items-center justify-between",
                         formData.memberIds.includes(p.id!) 
-                          ? "bg-orange-600 border-orange-500 text-white" 
-                          : "bg-[#1A1A1A] border-white/5 text-slate-400 hover:border-white/20"
+                          ? "bg-slate-900 border-slate-800 text-white" 
+                          : "bg-slate-50 border-slate-100 text-slate-600 hover:border-slate-200"
                       )}
                     >
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase tracking-tight">{p.name}</span>
                         <div className="flex items-center gap-2 mt-0.5 opacity-60">
                            <span className="text-[8px] font-bold uppercase">{p.role}</span>
-                           {p.unit && <span className="text-[8px] font-bold uppercase border-l border-white/20 pl-2">{p.unit}</span>}
+                           {p.unit && <span className="text-[8px] font-bold uppercase border-l border-slate-200 pl-2">{p.unit}</span>}
                         </div>
                       </div>
                       {p.registrationNumber && (
@@ -224,7 +224,7 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
                     </button>
                   ))}
                   {people.length === 0 && (
-                    <p className="col-span-full text-slate-600 italic text-[10px] p-4 text-center">Ninguém disponível em base.</p>
+                    <p className="col-span-full text-slate-300 italic text-[10px] p-4 text-center">Ninguém disponível em base.</p>
                   )}
                 </div>
               </div>
@@ -234,24 +234,24 @@ export default function TeamsView({ incidentId }: TeamsViewProps) {
                 <input 
                   type="text" 
                   placeholder="EX: SETOR NORTE - ACEIRO"
-                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold"
+                  className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 uppercase font-bold"
                   value={formData.currentLocation}
                   onChange={(e) => setFormData({...formData, currentLocation: e.target.value.toUpperCase()})}
                 />
               </div>
 
-              <div className="flex gap-4 pt-4 border-t border-white/5">
+              <div className="flex gap-4 pt-4 border-t border-slate-100">
                 <button 
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-3 rounded-lg border border-white/10 text-slate-500 hover:text-white hover:bg-white/5 font-black transition-all text-[10px] uppercase tracking-widest"
+                  className="flex-1 px-4 py-3 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-black transition-all text-[10px] uppercase tracking-widest"
                 >
                   DESCARTAR
                 </button>
                 <button 
                   type="submit"
                   disabled={formData.memberIds.length === 0}
-                  className="flex-1 px-4 py-3 rounded-lg bg-orange-700 disabled:opacity-30 text-white hover:bg-orange-600 font-black transition-all shadow-xl shadow-orange-950/20 text-[10px] uppercase tracking-widest"
+                  className="flex-1 px-4 py-3 rounded-lg bg-slate-900 disabled:opacity-30 text-white hover:bg-black font-black transition-all shadow-xl shadow-slate-200 text-[10px] uppercase tracking-widest"
                 >
                   ATIVAR EQUIPE ({formData.memberIds.length})
                 </button>

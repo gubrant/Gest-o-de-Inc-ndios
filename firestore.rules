@@ -32,7 +32,9 @@ service cloud.firestore {
              (!('coordinates' in data) || data.coordinates is string) &&
              (!('description' in data) || data.description is string) &&
              (!('password' in data) || data.password is string) &&
-             (!('createdBy' in data) || data.createdBy is string);
+             (!('createdBy' in data) || data.createdBy is string) &&
+             (!('allowedUsers' in data) || data.allowedUsers is list) &&
+             (!('finishedAt' in data) || data.finishedAt is int);
     }
 
     // Person validation

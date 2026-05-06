@@ -84,25 +84,25 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
     <div className="space-y-6 pb-20">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-black tracking-tighter text-white uppercase italic">Logística e Almoxarifado</h2>
+          <h2 className="text-3xl font-black tracking-tighter text-slate-900 uppercase italic">Logística e Almoxarifado</h2>
           <p className="text-slate-500 text-xs font-mono uppercase tracking-widest mt-1 italic">Controle de Estoque e Suprimentos</p>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
-          className="bg-orange-600 hover:bg-orange-500 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-950/20 text-[10px]"
+          className="bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-lg flex items-center gap-2 font-black uppercase tracking-widest transition-all shadow-xl shadow-slate-200 text-[10px]"
         >
           <Package size={16} />
           Cadastrar Item
         </button>
       </div>
 
-      <div className="bg-[#141414] border border-white/5 rounded-xl overflow-hidden shadow-2xl">
-        <div className="p-4 border-b border-white/5 flex items-center gap-4 bg-[#1A1A1A]/50">
-          <Search className="text-slate-500" size={16} />
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg">
+        <div className="p-4 border-b border-slate-100 flex items-center gap-4 bg-slate-50">
+          <Search className="text-slate-400" size={16} />
           <input 
             type="text" 
             placeholder="BUSCAR POR NOME OU CATEGORIA..." 
-            className="bg-transparent border-none focus:ring-0 text-[10px] font-bold uppercase tracking-widest w-full text-slate-200 placeholder:text-slate-600"
+            className="bg-transparent border-none focus:ring-0 text-[10px] font-bold uppercase tracking-widest w-full text-slate-900 placeholder:text-slate-300"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -110,31 +110,31 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-[#0A0A0A]">
+            <thead className="bg-slate-50">
               <tr>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5">Item / Equipamento</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5">Patrimônio</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5">Categoria</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5">Fotos</th>
-                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-white/5 text-right">Controle</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200">Item / Equipamento</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200">Patrimônio</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200">Categoria</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200">Fotos</th>
+                <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest border-b border-slate-200 text-right">Controle</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-100">
               {filteredMaterials.map(material => (
-                <tr key={material.id} className="hover:bg-white/[0.02] transition-colors group">
-                  <td className="p-4 text-sm font-bold text-white uppercase tracking-tighter">{material.name}</td>
+                <tr key={material.id} className="hover:bg-slate-50 transition-colors group">
+                  <td className="p-4 text-sm font-bold text-slate-900 uppercase tracking-tighter">{material.name}</td>
                   <td className="p-4">
                     {material.patrimony ? (
-                      <div className="flex items-center gap-1.5 text-[10px] font-mono text-orange-500 font-black uppercase italic">
+                      <div className="flex items-center gap-1.5 text-[10px] font-mono text-orange-600 font-black uppercase italic">
                         <Tag size={10} />
                         {material.patrimony}
                       </div>
                     ) : (
-                      <span className="text-[10px] text-slate-700 uppercase font-black tracking-widest italic">-</span>
+                      <span className="text-[10px] text-slate-300 uppercase font-black tracking-widest italic">-</span>
                     )}
                   </td>
                   <td className="p-4">
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-white/5 px-2 py-1 rounded text-slate-400 border border-white/5 italic">
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-slate-100 px-2 py-1 rounded text-slate-600 border border-slate-200 italic">
                        {material.category}
                     </span>
                   </td>
@@ -142,27 +142,27 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
                     {material.photos && material.photos.length > 0 ? (
                       <div className="flex -space-x-2">
                         {material.photos.map((p, i) => (
-                          <div key={i} className="w-8 h-8 rounded-lg border border-[#0A0A0A] overflow-hidden bg-zinc-800">
+                          <div key={i} className="w-8 h-8 rounded-lg border border-white overflow-hidden bg-slate-100">
                              <img src={p} alt="" className="w-full h-full object-cover" />
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <span className="text-[9px] text-zinc-800 uppercase font-black italic">Sem fotos</span>
+                      <span className="text-[9px] text-slate-200 uppercase font-black italic">Sem fotos</span>
                     )}
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-1">
                       <button 
                         onClick={() => adjustQuantity(material, -1)}
-                        className="p-1.5 hover:bg-red-500/10 text-slate-600 hover:text-red-500 rounded transition-all"
+                        className="p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded transition-all"
                         disabled={material.quantity <= 0}
                       >
                         <Minus size={14} />
                       </button>
                       <button 
                         onClick={() => adjustQuantity(material, 1)}
-                        className="p-1.5 hover:bg-green-500/10 text-slate-600 hover:text-green-500 rounded transition-all"
+                        className="p-1.5 hover:bg-green-50 text-slate-400 hover:text-green-600 rounded transition-all"
                       >
                         <Plus size={14} />
                       </button>
@@ -177,16 +177,16 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#141414] border border-white/10 p-8 rounded-2xl w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+            className="bg-white border border-slate-200 p-8 rounded-2xl w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
           >
-            <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
                <div className="p-2 bg-orange-600/10 rounded-lg text-orange-600"><Plus size={20}/></div>
                <div>
-                  <h3 className="text-xl font-bold text-white uppercase tracking-tighter italic">Novo Material</h3>
+                  <h3 className="text-xl font-bold text-slate-900 uppercase tracking-tighter italic">Novo Material</h3>
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Inclusão em Inventário Operacional</p>
                </div>
             </div>
@@ -197,7 +197,7 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
                 <input 
                   required
                   type="text" 
-                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold"
+                  className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 uppercase font-bold"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value.toUpperCase()})}
                 />
@@ -208,7 +208,7 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
                   <input 
                     placeholder="EX: EPI, ALIMENTO"
                     type="text" 
-                    className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold"
+                    className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 uppercase font-bold"
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value.toUpperCase()})}
                   />
@@ -216,7 +216,7 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
                 <div>
                   <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">UNIDADE</label>
                   <select 
-                    className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white font-bold uppercase"
+                    className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 font-bold uppercase"
                     value={formData.unit}
                     onChange={(e) => setFormData({...formData, unit: e.target.value})}
                   >
@@ -232,7 +232,7 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
                 <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">QUANTIDADE INICIAL</label>
                 <input 
                   type="number" 
-                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white font-bold"
+                  className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 font-bold"
                   value={formData.quantity}
                   onChange={(e) => setFormData({...formData, quantity: parseInt(e.target.value) || 0})}
                 />
@@ -242,7 +242,7 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
                 <input 
                   placeholder="EX: PAT-00123"
                   type="text" 
-                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold"
+                  className="w-full bg-slate-50 border-slate-200 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-slate-900 uppercase font-bold"
                   value={formData.patrimony}
                   onChange={(e) => setFormData({...formData, patrimony: e.target.value.toUpperCase()})}
                 />
@@ -253,17 +253,17 @@ export default function MaterialsView({ incidentId }: MaterialsViewProps) {
                 onChange={(photos) => setFormData({...formData, photos})}
               />
 
-              <div className="flex gap-4 pt-6 border-t border-white/5">
+              <div className="flex gap-4 pt-6 border-t border-slate-100">
                 <button 
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-3 rounded-lg border border-white/10 text-slate-500 hover:text-white hover:bg-white/5 font-black transition-all text-[10px] uppercase tracking-widest"
+                  className="flex-1 px-4 py-3 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-black transition-all text-[10px] uppercase tracking-widest"
                 >
                   ABORTAR
                 </button>
                 <button 
                   type="submit"
-                  className="flex-1 px-4 py-3 rounded-lg bg-orange-700 text-white hover:bg-orange-600 font-black transition-all shadow-xl shadow-orange-950/20 text-[10px] uppercase tracking-widest"
+                  className="flex-1 px-4 py-3 rounded-lg bg-slate-900 text-white hover:bg-black font-black transition-all shadow-xl shadow-slate-200 text-[10px] uppercase tracking-widest"
                 >
                   INVENTARIAR
                 </button>
