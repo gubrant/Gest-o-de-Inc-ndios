@@ -1,0 +1,166 @@
+{
+  "entities": {
+    "Incident": {
+      "title": "Incident",
+      "description": "A fire event being managed",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "location": { "type": "string" },
+        "coordinates": { "type": "string" },
+        "status": { "type": "string", "enum": ["active_no_resources", "active_combat", "mopping_up", "surveillance", "controlled"] },
+        "startDate": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" }
+      },
+      "required": ["name", "status", "startDate"]
+    },
+    "Person": {
+      "title": "Person",
+      "description": "Anyone involved in the fire operation",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "organization": { "type": "string", "description": "e.g., Bombeiros, PM, Civil, IEF, etc." },
+        "role": { "type": "string" },
+        "contact": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "left"] },
+        "incidentId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "organization", "status", "incidentId"]
+    },
+    "Vehicle": {
+      "title": "Vehicle",
+      "description": "Vehicles used in the operation",
+      "type": "object",
+      "properties": {
+        "plate": { "type": "string" },
+        "type": { "type": "string" },
+        "organization": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "maintenance", "left"] },
+        "incidentId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "plate", "status", "incidentId"]
+    },
+    "Material": {
+      "title": "Material",
+      "description": "Warehouse inventory and registered materials",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string" },
+        "incidentId": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "quantity", "incidentId"]
+    },
+    "Team": {
+      "title": "Team",
+      "description": "Combative teams formed from registered personnel",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "memberIds": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["base", "field", "left"] },
+        "currentLocation": { "type": "string" },
+        "incidentId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "memberIds", "status", "incidentId"]
+    },
+    "MealDemand": {
+      "title": "MealDemand",
+      "description": "Logistics for feeding the personnel",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "mealType": { "type": "string", "enum": ["breakfast", "lunch", "snack", "dinner"] },
+        "count": { "type": "number" },
+        "notes": { "type": "string" },
+        "incidentId": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["date", "mealType", "count", "incidentId"]
+    },
+    "ExternalResource": {
+      "title": "External Resource",
+      "description": "External partners, machinery, suppliers, etc.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["machinery", "partner", "phone", "supplier"] },
+        "contact": { "type": "string" },
+        "description": { "type": "string" },
+        "incidentId": { "type": "string" }
+      },
+      "required": ["name", "type", "incidentId"]
+    },
+    "LogAction": {
+      "title": "LogAction",
+      "description": "Actions and reports of the event",
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "category": { "type": "string" },
+        "reporterId": { "type": "string" },
+        "incidentId": { "type": "string" }
+      },
+      "required": ["description", "timestamp", "incidentId"]
+    }
+},
+    "MapLayer": {
+      "title": "MapLayer",
+      "description": "Geospatial data layers (KML/GeoJSON)",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "data": { "type": "object", "description": "GeoJSON data" },
+        "type": { "type": "string", "enum": ["kml", "manual"] },
+        "incidentId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "data", "type", "incidentId"]
+    },
+    "AppUser": {
+      "title": "AppUser",
+      "description": "System identification and access",
+      "type": "object",
+      "properties": {
+        "login": { "type": "string" },
+        "password": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "operator"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["login", "password", "role"]
+    "IncidentPhoto": {
+      "title": "IncidentPhoto",
+      "description": "Photos from the operation in the field",
+      "type": "object",
+      "properties": {
+        "url": { "type": "string", "description": "Base64 image data" },
+        "description": { "type": "string" },
+        "incidentId": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["url", "incidentId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "incidents": { "schema": "Incident", "description": "Collection of all managed incidents" },
+    "people": { "schema": "Person", "description": "Collection of all personnel registered in the event" },
+    "vehicles": { "schema": "Vehicle", "description": "Collection of all vehicles" },
+    "materials": { "schema": "Material", "description": "Inventory" },
+    "teams": { "schema": "Team", "description": "Combative teams" },
+    "meal_demands": { "schema": "MealDemand", "description": "Food logistics" },
+    "external_resources": { "schema": "ExternalResource", "description": "Contacts and partners" },
+    "actions": { "schema": "LogAction", "description": "Event logging and reports" },
+    "map_layers": { "schema": "MapLayer", "description": "Geospatial data layers" },
+    "users": { "schema": "AppUser", "description": "System users and credentials" },
+    "incident_photos": { "schema": "IncidentPhoto", "description": "Operational photos from the field" }
+  }
+}

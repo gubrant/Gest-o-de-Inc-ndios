@@ -1,0 +1,269 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  collection, query, onSnapshot, addDoc, 
+  orderBy 
+} from 'firebase/firestore';
+import { db, handleFirestoreError } from '../../firebase';
+import { AppUser, Incident } from '../../types';
+import { Flame, Plus, MapPin, Calendar, ArrowRight, Activity, Crosshair, LogOut, Shield } from 'lucide-react';
+import { cn } from '../../lib/utils';
+import { motion } from 'motion/react';
+import { format } from 'date-fns';
+
+interface IncidentsViewProps {
+  onSelect: (incident: Incident) => void;
+  user: AppUser;
+  onLogout: () => void;
+}
+
+export default function IncidentsView({ onSelect, user, onLogout }: IncidentsViewProps) {
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    location: '',
+    coordinates: '',
+    status: 'active_combat' as const,
+    description: ''
+  });
+
+  const path = 'incidents';
+
+  useEffect(() => {
+    const q = query(collection(db, path), orderBy('startDate', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Incident));
+      setIncidents(docs);
+      setLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, 'list' as any, path);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await addDoc(collection(db, path), {
+        ...formData,
+        startDate: Date.now()
+      });
+      setShowAddModal(false);
+      setFormData({ name: '', location: '', coordinates: '', status: 'active_combat', description: '' });
+    } catch (error) {
+      handleFirestoreError(error, 'create' as any, path);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0A0A0A] p-6 lg:p-12">
+      {/* Top Bar for User & Logout */}
+      <div className="max-w-6xl mx-auto mb-8 flex justify-end no-print">
+        <div className="bg-[#121212] border border-white/5 px-4 py-2 rounded-2xl flex items-center gap-6 shadow-2xl">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white border border-white/10 shadow-[0_0_10px_rgba(234,88,12,0.3)]">
+               <Shield size={14}/>
+            </div>
+            <div className="flex flex-col">
+              <p className="text-[10px] font-black truncate text-slate-200 leading-tight uppercase italic">{user.login}</p>
+              <p className="text-[8px] text-slate-500 font-mono uppercase tracking-widest">{user.role === 'admin' ? 'Administrador' : 'Operador'}</p>
+            </div>
+          </div>
+          <button 
+            onClick={onLogout}
+            className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-[9px] font-black uppercase tracking-widest"
+          >
+            <LogOut size={16} className="text-red-500/50" />
+            Sair
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto space-y-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-orange-600 rounded-xl shadow-2xl shadow-orange-950/40">
+                <Flame size={32} className="text-white" />
+              </div>
+              <h1 className="text-4xl lg:text-6xl font-black tracking-tighter text-white uppercase italic">
+                Central de <span className="text-orange-600">Incidentes</span>
+              </h1>
+            </div>
+            <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.3em] flex items-center gap-2">
+              <Activity size={14} className="text-orange-600 animate-pulse" />
+              SISTEMA DE GESTÃO DE INCÊNDIOS FLORESTAIS
+            </p>
+          </div>
+          
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="group relative bg-white text-black px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs flex items-center gap-3 active:scale-95 transition-all shadow-2xl shadow-white/5 overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-orange-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition-colors">
+              <Plus size={18} />
+              Novo Registro de Incêndio
+            </span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {incidents.map((incident, index) => (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              key={incident.id}
+              onClick={() => onSelect(incident)}
+              className="group cursor-pointer relative bg-[#141414] border border-white/5 rounded-2xl overflow-hidden hover:border-orange-600/30 transition-all shadow-2xl"
+            >
+              <div className="p-8">
+                <div className="flex items-start justify-between mb-6">
+                  <div className={cn(
+                    "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
+                    incident.status === 'active_combat' ? "bg-orange-600/10 border-orange-600 text-orange-600" :
+                    incident.status === 'active_no_resources' ? "bg-red-600/10 border-red-600 text-red-600" :
+                    incident.status === 'mopping_up' ? "bg-blue-600/10 border-blue-600 text-blue-600" :
+                    incident.status === 'surveillance' ? "bg-zinc-600/10 border-zinc-600 text-zinc-600" :
+                    "bg-green-600/10 border-green-600 text-green-600"
+                  )}>
+                    {incident.status === 'active_no_resources' ? 'Ativo sem recursos' : 
+                     incident.status === 'active_combat' ? 'Ativo em combate' : 
+                     incident.status === 'mopping_up' ? 'Rescaldo' :
+                     incident.status === 'surveillance' ? 'Vigilância' : 'Debelado'}
+                  </div>
+                  <Calendar size={18} className="text-slate-700" />
+                </div>
+
+                <h3 className="text-2xl font-black text-white uppercase tracking-tighter italic mb-2 group-hover:text-orange-500 transition-colors">
+                  {incident.name}
+                </h3>
+                
+                <div className="flex flex-col gap-2 mb-6">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <MapPin size={14} className="text-orange-600/50" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest truncate">{incident.location}</span>
+                  </div>
+                  {incident.coordinates && (
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <Crosshair size={14} className="text-orange-600/50" />
+                      <span className="text-[9px] font-mono tracking-tight">{incident.coordinates}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-6 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-slate-600">
+                    {format(incident.startDate, 'dd/MM/yyyy HH:mm')}
+                  </span>
+                  <div className="flex items-center gap-2 text-white font-black text-[10px] uppercase tracking-widest">
+                    Acessar <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+
+          {incidents.length === 0 && !loading && (
+            <div className="col-span-full py-32 text-center border-2 border-dashed border-white/5 rounded-3xl">
+              <Flame size={48} className="text-slate-800 mx-auto mb-6" />
+              <p className="text-slate-600 font-black uppercase tracking-[0.2em] text-sm">Nenhum incêndio ativo registrado no sistema</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {showAddModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-[#141414] border border-white/10 p-8 rounded-1xl w-full max-w-md shadow-2xl"
+          >
+            <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+               <div className="p-2 bg-orange-600/10 rounded-lg text-orange-600"><Plus size={20}/></div>
+               <div>
+                  <h3 className="text-xl font-bold text-white uppercase tracking-tighter italic">Novo Registro</h3>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Abertura de Ocorrência</p>
+               </div>
+            </div>
+
+            <form onSubmit={handleAdd} className="space-y-5">
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">NOME DA OPERAÇÃO / LOCAL</label>
+                <input 
+                  required
+                  type="text" 
+                  placeholder="EX: INCÊNDIO SERRA DO CIPÓ"
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value.toUpperCase()})}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">LOCALIZAÇÃO DETALHADA</label>
+                <input 
+                  required
+                  type="text" 
+                  placeholder="EX: KM 45 - RODOVIA MG-010"
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold"
+                  value={formData.location}
+                  onChange={(e) => setFormData({...formData, location: e.target.value.toUpperCase()})}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">COORDENADAS GEOGRÁFICAS</label>
+                <input 
+                  type="text" 
+                  placeholder="EX: -20°31'32'', -44°31'23''"
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white font-mono"
+                  value={formData.coordinates}
+                  onChange={(e) => setFormData({...formData, coordinates: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">STATUS INICIAL</label>
+                <select 
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white font-bold uppercase"
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value as any})}
+                >
+                  <option value="active_no_resources">Ativo sem recursos</option>
+                  <option value="active_combat">Ativo em combate</option>
+                  <option value="mopping_up">Rescaldo</option>
+                  <option value="surveillance">Vigilância</option>
+                  <option value="controlled">Debelado</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">DESCRIÇÃO INICIAL</label>
+                <textarea 
+                  className="w-full bg-[#1A1A1A] border-white/5 border rounded-lg text-sm p-3 focus:border-orange-600 outline-none transition-all text-white uppercase font-bold min-h-[100px]"
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value.toUpperCase()})}
+                />
+              </div>
+              <div className="flex gap-4 pt-6 border-t border-white/5">
+                <button 
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 px-4 py-3 rounded-lg border border-white/10 text-slate-500 hover:text-white hover:bg-white/5 font-black transition-all text-[10px] uppercase tracking-widest"
+                >
+                  CANCELAR
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 px-4 py-3 rounded-lg bg-orange-700 text-white hover:bg-orange-600 font-black transition-all shadow-xl shadow-orange-950/20 text-[10px] uppercase tracking-widest"
+                >
+                  REGISTRAR
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+    </div>
+  );
+}

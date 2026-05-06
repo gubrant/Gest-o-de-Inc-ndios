@@ -1,0 +1,179 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Incident validation
+    function isValidIncident(data) {
+      return data.keys().hasAll(['name', 'location', 'status', 'startDate']) &&
+             data.name is string && data.name.size() > 0 &&
+             data.status in ['active_no_resources', 'active_combat', 'mopping_up', 'surveillance', 'controlled'] &&
+             data.startDate is int &&
+             (!('coordinates' in data) || data.coordinates is string) &&
+             (!('description' in data) || data.description is string);
+    }
+
+    // Person validation
+    function isValidPerson(data) {
+      return data.keys().hasAll(['name', 'organization', 'status', 'createdAt', 'incidentId']) &&
+             data.name is string && data.name.size() > 0 &&
+             data.incidentId is string &&
+             data.status in ['active', 'left'];
+    }
+
+    // Vehicle validation
+    function isValidVehicle(data) {
+      return data.keys().hasAll(['plate', 'type', 'status', 'createdAt', 'incidentId']) &&
+             data.plate is string &&
+             data.incidentId is string &&
+             data.status in ['active', 'maintenance', 'left'];
+    }
+
+    // Material validation
+    function isValidMaterial(data) {
+      return data.keys().hasAll(['name', 'quantity', 'incidentId']) &&
+             data.name is string &&
+             data.incidentId is string &&
+             data.quantity is int;
+    }
+
+    // Team validation
+    function isValidTeam(data) {
+      return data.keys().hasAll(['name', 'memberIds', 'status', 'createdAt', 'incidentId']) &&
+             data.name is string &&
+             data.memberIds is list &&
+             data.incidentId is string &&
+             data.status in ['base', 'field', 'left'];
+    }
+
+    // MealDemand validation
+    function isValidMealDemand(data) {
+      return data.keys().hasAll(['date', 'mealType', 'count', 'incidentId']) &&
+             data.mealType in ['breakfast', 'lunch', 'snack', 'dinner'] &&
+             data.incidentId is string &&
+             data.count is int;
+    }
+
+    // ExternalResource validation
+    function isValidExternalResource(data) {
+      return data.keys().hasAll(['name', 'type', 'contact', 'incidentId']) &&
+             data.incidentId is string &&
+             data.type in ['machinery', 'partner', 'phone', 'supplier'];
+    }
+
+    // MapLayer validation
+    function isValidMapLayer(data) {
+      return data.keys().hasAll(['name', 'data', 'type', 'incidentId', 'createdAt']) &&
+             data.name is string &&
+             data.type in ['kml', 'manual'] &&
+             data.incidentId is string;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['login', 'password', 'role', 'createdAt']) &&
+             data.login is string && data.login.size() >= 3 &&
+             data.password is string && data.password.size() >= 4 &&
+             data.role in ['admin', 'operator'];
+    }
+
+    // Collection match groups
+    match /incidents/{incidentId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidIncident(incoming());
+      allow update: if isSignedIn() && isValidIncident(incoming());
+    }
+
+    match /people/{personId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidPerson(incoming());
+      allow update: if isSignedIn() && (
+        (incoming().diff(existing()).affectedKeys().hasOnly(['status'])) ||
+        (isValidPerson(incoming()))
+      );
+    }
+
+    match /vehicles/{vehicleId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidVehicle(incoming());
+      allow update: if isSignedIn() && (
+        (incoming().diff(existing()).affectedKeys().hasOnly(['status'])) ||
+        (isValidVehicle(incoming()))
+      );
+    }
+
+    match /materials/{materialId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidMaterial(incoming());
+      allow update: if isSignedIn() && (
+        (incoming().diff(existing()).affectedKeys().hasOnly(['quantity', 'updatedAt'])) ||
+        (isValidMaterial(incoming()))
+      );
+    }
+
+    match /teams/{teamId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidTeam(incoming());
+      allow update: if isSignedIn() && (
+        (incoming().diff(existing()).affectedKeys().hasOnly(['status', 'currentLocation'])) ||
+        (isValidTeam(incoming()))
+      );
+    }
+
+    match /meal_demands/{demandId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidMealDemand(incoming());
+      allow update: if isSignedIn() && isValidMealDemand(incoming());
+    }
+
+    match /external_resources/{resId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidExternalResource(incoming());
+      allow update: if isSignedIn() && isValidExternalResource(incoming());
+    }
+
+    match /actions/{actionId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && incoming().incidentId is string;
+    }
+
+    match /map_layers/{layerId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidMapLayer(incoming());
+      allow update: if isSignedIn() && isValidMapLayer(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidUser(incoming());
+      allow update: if isSignedIn() && isValidUser(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    match /incident_photos/{photoId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && incoming().incidentId is string && incoming().url.size() < 1048576;
+      allow delete: if isSignedIn();
+    }
+  }
+}
