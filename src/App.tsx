@@ -27,13 +27,17 @@ import IncidentsView from './components/views/IncidentsView';
 import LoginView from './components/views/LoginView';
 import UsersView from './components/views/UsersView';
 
-const SidebarItem = ({ to, icon: Icon, label, active }: { to: string, icon: any, label: string, active: boolean, key?: string }) => (
-  <Link to={to} className={cn(
-    "flex items-center gap-3 px-6 py-3 transition-all duration-200 group text-sm font-medium",
-    active 
-      ? "bg-white/5 border-r-2 border-orange-500 text-white shadow-inner" 
-      : "text-slate-400 hover:text-white hover:bg-white/5"
-  )}>
+  const SidebarItem = ({ to, icon: Icon, label, active, onClick }: { to: string, icon: any, label: string, active: boolean, onClick?: () => void, key?: string }) => (
+  <Link 
+    to={to} 
+    onClick={onClick}
+    className={cn(
+      "flex items-center gap-3 px-6 py-3 transition-all duration-200 group text-sm font-medium",
+      active 
+        ? "bg-white/5 border-r-2 border-orange-500 text-white shadow-inner" 
+        : "text-slate-400 hover:text-white hover:bg-white/5"
+    )}
+  >
     <Icon size={18} className={cn(active ? "text-orange-500" : "text-slate-500 group-hover:text-orange-400/70")} />
     <span className="tracking-tight">{label}</span>
   </Link>
@@ -42,7 +46,7 @@ const SidebarItem = ({ to, icon: Icon, label, active }: { to: string, icon: any,
 function AppContent() {
   const [user, setUser] = useState<AppUser | null>(null);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024);
   const [loading, setLoading] = useState(true);
   const [isViewingUsers, setIsViewingUsers] = useState(false);
   const location = useLocation();
@@ -94,6 +98,12 @@ function AppContent() {
     }
     
     return false;
+  };
+
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
   };
 
   const handleLogout = () => {
@@ -223,6 +233,7 @@ function AppContent() {
                 icon={item.icon} 
                 label={item.label} 
                 active={location.pathname === item.to} 
+                onClick={closeSidebarOnMobile}
               />
             ))}
           </nav>

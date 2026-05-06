@@ -274,7 +274,7 @@ export default function PeopleView({ incidentId }: PeopleViewProps) {
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#141414] border border-white/10 p-8 rounded-2xl w-full max-w-md shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+            className="bg-[#141414] border border-white/10 p-8 rounded-2xl w-full max-w-md shadow-[0_0_50px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto custom-scrollbar"
           >
             <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
                <div className="p-2 bg-orange-600/10 rounded-lg text-orange-600"><UserPlus size={20}/></div>

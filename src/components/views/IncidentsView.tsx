@@ -29,6 +29,9 @@ export default function IncidentsView({ onSelect, user, onLogout, onGoToUsers }:
   const [enteredPassword, setEnteredPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
 
+  const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -54,6 +57,8 @@ export default function IncidentsView({ onSelect, user, onLogout, onGoToUsers }:
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
+    setErrorMsg(null);
     try {
       await addDoc(collection(db, path), {
         ...formData,
@@ -63,7 +68,10 @@ export default function IncidentsView({ onSelect, user, onLogout, onGoToUsers }:
       setShowAddModal(false);
       setFormData({ name: '', location: '', coordinates: '', status: 'active_combat', description: '', password: '' });
     } catch (error) {
+      setErrorMsg("Erro ao salvar. Verifique sua conexão.");
       handleFirestoreError(error, 'create' as any, path);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -251,6 +259,12 @@ export default function IncidentsView({ onSelect, user, onLogout, onGoToUsers }:
               </div>
 
               <form onSubmit={handleAdd} className="space-y-5">
+                {errorMsg && (
+                  <div className="bg-red-500/10 border border-red-500/20 p-3 rounded-lg flex items-center gap-2 text-red-500 text-[10px] font-black uppercase tracking-widest">
+                    <AlertCircle size={14} />
+                    {errorMsg}
+                  </div>
+                )}
                 <div>
                   <label className="text-[10px] font-black uppercase text-slate-500 mb-2 block tracking-[0.2em]">NOME DA OPERAÇÃO / LOCAL</label>
                   <input 
@@ -328,10 +342,16 @@ export default function IncidentsView({ onSelect, user, onLogout, onGoToUsers }:
                     CANCELAR
                   </button>
                   <button 
+                    disabled={saving}
                     type="submit"
-                    className="flex-1 px-4 py-3 rounded-lg bg-orange-700 text-white hover:bg-orange-600 font-black transition-all shadow-xl shadow-orange-950/20 text-[10px] uppercase tracking-widest"
+                    className="flex-1 px-4 py-3 rounded-lg bg-orange-700 text-white hover:bg-orange-600 font-black transition-all shadow-xl shadow-orange-950/20 text-[10px] uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    REGISTRAR
+                    {saving ? (
+                      <>
+                        <Activity size={14} className="animate-spin" />
+                        SALVANDO...
+                      </>
+                    ) : 'REGISTRAR'}
                   </button>
                 </div>
               </form>
@@ -347,7 +367,7 @@ export default function IncidentsView({ onSelect, user, onLogout, onGoToUsers }:
                initial={{ scale: 0.95, opacity: 0 }}
                animate={{ scale: 1, opacity: 1 }}
                exit={{ scale: 0.95, opacity: 0 }}
-               className="bg-[#121212] border border-white/10 p-8 rounded-3xl w-full max-w-sm shadow-2xl relative overflow-hidden"
+               className="bg-[#121212] border border-white/10 p-8 rounded-3xl w-full max-w-sm shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto custom-scrollbar"
              >
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-600 to-red-600"></div>
                 
